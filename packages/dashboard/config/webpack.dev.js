@@ -7,24 +7,26 @@ const commonConfig = require("./webpack.common");
 const devConfig = {
   mode: "development",
   output: {
-    publicPath: "http://localhost:8090/"
+    publicPath: "http://localhost:8093/"
   },
   devServer: {
-    port: 8090,
-    historyApiFallback: true
+    port: 8093,
+    historyApiFallback: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    }
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: "./public/index.html"
-    }),
     new ModuleFederationPlugin({
-      name: "container",
-      remotes: {
-        marketing: "marketing@http://localhost:8091/remoteEntry.js",
-        auth: "auth@http://localhost:8092/remoteEntry.js",
-        dashboard: "dashboard@http://localhost:8093/remoteEntry.js"
+      name: "dashboard",
+      filename: "remoteEntry.js",
+      exposes: {
+        "./DashboardApp": "./src/bootstrap"
       },
       shared: packageJson.dependencies
+    }),
+    new HtmlWebpackPlugin({
+      template: "./public/index.html"
     })
   ]
 };
